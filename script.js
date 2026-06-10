@@ -1,4 +1,4 @@
-let highestZ = 1;
+]let highestZ = 1;
 
 class Paper {
   holdingPaper = false;
@@ -73,13 +73,13 @@ class Paper {
 
     // --- 📱 Touch Events (Mobile) ---
     paper.addEventListener('touchstart', (e) => {
-      // Get the coordinates of the first finger touching the screen
+      e.preventDefault(); // 🛑 THIS IS THE MAGIC FIX: Stops screen from scrolling when you touch the paper
       startDrag(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: false });
 
     document.addEventListener('touchmove', (e) => {
       if (this.holdingPaper) {
-        e.preventDefault(); // 🛑 CRUCIAL: Stops the phone screen from scrolling down when dragging
+        e.preventDefault(); // Stops the background from moving while dragging
         doDrag(e.touches[0].clientX, e.touches[0].clientY);
       }
     }, { passive: false });
