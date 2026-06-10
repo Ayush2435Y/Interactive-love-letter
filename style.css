@@ -7,7 +7,7 @@ body {
   align-items: center;
   justify-content: center;
   background-size: 1000px;
-  background-image: url("bg.jpg"); /* Updated to local bg if you use it */
+  background-image: url("bg.jpeg"); /* Updated to local bg if you use it */
   background-position: center center;
   overflow: hidden; /* Prevents unwanted page scrolling on mobile while dragging */
 }
