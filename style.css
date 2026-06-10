@@ -1,29 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Zeyada&display=swap');
 
-
-
-
 body {
   height: 100vh;
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-
   background-size: 1000px;
-  background-image: url("https://www.psdgraphics.com/wp-content/uploads/2022/01/white-math-paper-texture.jpg");
+  background-image: url("bg.jpg"); /* Updated to local bg if you use it */
   background-position: center center;
+  overflow: hidden; /* Prevents unwanted page scrolling on mobile while dragging */
 }
 
 .paper {
-  background-image: url("https://i0.wp.com/textures.world/wp-content/uploads/2018/10/2-Millimeter-Paper-Background-copy.jpg?ssl=1");
+  background-image: url("paper.webp"); /* Updated to local paper image */
   background-size: 500px;
   background-position: center center;
   padding: 20px 100px;
-/*  min-width: 800px; */
-  
   transform: rotateZ(-5deg);
   box-shadow: 1px 15px 20px 0px rgba(0,0,0,0.5);
-  
   position: absolute;
 }
 
@@ -68,6 +63,32 @@ p {
   color: rgb(0,0,100);
   opacity: 0.75;
   user-select: none;
-  
-  // filter: drop-shadow(2px 1.5px 1px rgba(0,0,105,0.9));
+  margin: 0; /* Removes unnecessary default margins */
+  text-align: center;
+}
+
+/* =========================================
+   📱 MOBILE RESPONSIVE CSS
+   ========================================= */
+@media (max-width: 768px) {
+  .paper {
+    padding: 15px 40px;
+    background-size: 300px;
+  }
+  p {
+    font-size: 35px;
+  }
+  .paper.image p {
+    font-size: 22px;
+  }
+  .paper.heart {
+    width: 130px;
+    height: 130px;
+  }
+  .paper.heart::after {
+    background-size: 100px;
+  }
+  img {
+    max-height: 150px;
+  }
 }
