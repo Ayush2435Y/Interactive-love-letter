@@ -16,7 +16,8 @@ class Paper {
   rotating = false;
 
   init(paper) {
-    document.addEventListener('mousemove', (e) => {
+    // Listens for both mouse and touch movements
+    document.addEventListener('pointermove', (e) => {
       if(!this.rotating) {
         this.mouseX = e.clientX;
         this.mouseY = e.clientY;
@@ -48,28 +49,36 @@ class Paper {
 
         paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
       }
-    })
+    });
 
-    paper.addEventListener('mousedown', (e) => {
+    // Listens for mouse click or finger touch
+    paper.addEventListener('pointerdown', (e) => {
       if(this.holdingPaper) return; 
       this.holdingPaper = true;
       
       paper.style.zIndex = highestZ;
       highestZ += 1;
       
-      if(e.button === 0) {
-        this.mouseTouchX = this.mouseX;
-        this.mouseTouchY = this.mouseY;
-        this.prevMouseX = this.mouseX;
-        this.prevMouseY = this.mouseY;
+      if(e.button === 0 || e.pointerType === 'touch') {
+        this.mouseTouchX = e.clientX;
+        this.mouseTouchY = e.clientY;
+        this.prevMouseX = e.clientX;
+        this.prevMouseY = e.clientY;
       }
       if(e.button === 2) {
         this.rotating = true;
       }
     });
-    window.addEventListener('mouseup', () => {
+
+    // Listens for mouse release or finger lift
+    window.addEventListener('pointerup', () => {
       this.holdingPaper = false;
       this.rotating = false;
+    });
+
+    // Prevents the right-click menu from popping up when rotating
+    paper.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
     });
   }
 }
