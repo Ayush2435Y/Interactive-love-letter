@@ -16,67 +16,77 @@ class Paper {
   rotating = false;
 
   init(paper) {
-    // Listens for both mouse and touch movements
-    document.addEventListener('pointermove', (e) => {
-      if(!this.rotating) {
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
-        
-        this.velX = this.mouseX - this.prevMouseX;
-        this.velY = this.mouseY - this.prevMouseY;
-      }
-        
-      const dirX = e.clientX - this.mouseTouchX;
-      const dirY = e.clientY - this.mouseTouchY;
-      const dirLength = Math.sqrt(dirX*dirX+dirY*dirY);
-      const dirNormalizedX = dirX / dirLength;
-      const dirNormalizedY = dirY / dirLength;
-
-      const angle = Math.atan2(dirNormalizedY, dirNormalizedX);
-      let degrees = 180 * angle / Math.PI;
-      degrees = (360 + Math.round(degrees)) % 360;
-      if(this.rotating) {
-        this.rotation = degrees;
-      }
-
-      if(this.holdingPaper) {
-        if(!this.rotating) {
-          this.currentPaperX += this.velX;
-          this.currentPaperY += this.velY;
-        }
-        this.prevMouseX = this.mouseX;
-        this.prevMouseY = this.mouseY;
-
-        paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
-      }
-    });
-
-    // Listens for mouse click or finger touch
-    paper.addEventListener('pointerdown', (e) => {
-      if(this.holdingPaper) return; 
+    // --- Core Drag Logic ---
+    const startDrag = (x, y) => {
+      if (this.holdingPaper) return;
       this.holdingPaper = true;
       
       paper.style.zIndex = highestZ;
       highestZ += 1;
       
-      if(e.button === 0 || e.pointerType === 'touch') {
-        this.mouseTouchX = e.clientX;
-        this.mouseTouchY = e.clientY;
-        this.prevMouseX = e.clientX;
-        this.prevMouseY = e.clientY;
+      this.mouseTouchX = x;
+      this.mouseTouchY = y;
+      this.prevMouseX = x;
+      this.prevMouseY = y;
+    };
+
+    const doDrag = (x, y) => {
+      if (!this.holdingPaper) return;
+      
+      this.mouseX = x;
+      this.mouseY = y;
+      
+      this.velX = this.mouseX - this.prevMouseX;
+      this.velY = this.mouseY - this.prevMouseY;
+      
+      this.currentPaperX += this.velX;
+      this.currentPaperY += this.velY;
+      
+      this.prevMouseX = this.mouseX;
+      this.prevMouseY = this.mouseY;
+      
+      paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
+    };
+
+    const stopDrag = () => {
+      this.holdingPaper = false;
+      this.rotating = false;
+    };
+
+    // --- 💻 Mouse Events (Desktop) ---
+    paper.addEventListener('mousedown', (e) => {
+      if (e.button === 0) { // Left click
+        startDrag(e.clientX, e.clientY);
       }
-      if(e.button === 2) {
+      if (e.button === 2) { // Right click
         this.rotating = true;
       }
     });
 
-    // Listens for mouse release or finger lift
-    window.addEventListener('pointerup', () => {
-      this.holdingPaper = false;
-      this.rotating = false;
+    document.addEventListener('mousemove', (e) => {
+      if (this.holdingPaper && !this.rotating) {
+         doDrag(e.clientX, e.clientY);
+      }
     });
 
-    // Prevents the right-click menu from popping up when rotating
+    window.addEventListener('mouseup', stopDrag);
+
+    // --- 📱 Touch Events (Mobile) ---
+    paper.addEventListener('touchstart', (e) => {
+      // Get the coordinates of the first finger touching the screen
+      startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+      if (this.holdingPaper) {
+        e.preventDefault(); // 🛑 CRUCIAL: Stops the phone screen from scrolling down when dragging
+        doDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', stopDrag);
+
+    // Stops the right-click menu from appearing when rotating on desktop
     paper.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
