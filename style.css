@@ -9,7 +9,9 @@ body {
   background-size: 1000px;
   background-image: url("bg.jpeg"); /* Updated to local bg if you use it */
   background-position: center center;
-  overflow: hidden; /* Prevents unwanted page scrolling on mobile while dragging */
+  overflow: hidden; /* Prevents unwanted page scrolling on mobile while dragging */ 
+  touch-action: none; 
+  user-select: none;
 }
 
 .paper {
